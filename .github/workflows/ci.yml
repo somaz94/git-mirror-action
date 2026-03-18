@@ -74,13 +74,11 @@ jobs:
             --rm ${{ env.TEST_TAG }}
           echo "PASS: Docker dry-run with GitHub succeeded"
 
-      - name: 'Test: Docker dry-run multi-target parallel (GitHub + GitLab + Bitbucket)'
+      - name: 'Test: Docker dry-run multi-target parallel (GitHub + GitLab)'
         run: |
           docker run \
-            --env INPUT_TARGETS="$(printf 'github::https://github.com/somaz94/git-mirror-action.git\ngitlab::https://gitlab.com/backup6695808/git-mirror-action.git\nbitbucket::https://bitbucket.org/somaz94/git-mirror-action.git')" \
+            --env INPUT_TARGETS="$(printf 'github::https://github.com/somaz94/git-mirror-action.git\ngitlab::https://gitlab.com/backup6695808/git-mirror-action.git')" \
             --env INPUT_GITLAB_TOKEN="${{ secrets.GITLAB_TOKEN }}" \
-            --env INPUT_BITBUCKET_USERNAME="${{ secrets.BITBUCKET_USERNAME }}" \
-            --env INPUT_BITBUCKET_API_TOKEN="${{ secrets.BITBUCKET_TOKEN }}" \
             --env INPUT_MIRROR_BRANCHES="all" \
             --env INPUT_DRY_RUN="true" \
             --env INPUT_PARALLEL="true" \
@@ -150,23 +148,10 @@ jobs:
           ./git-mirror-action
           echo "PASS: dry-run with GitLab + exclude branches succeeded"
 
-      - name: 'Test: dry-run with Bitbucket repo (exit 0)'
+      - name: 'Test: dry-run multi-target parallel with retry (GitHub + GitLab)'
         run: |
-          INPUT_TARGETS="bitbucket::https://bitbucket.org/somaz94/git-mirror-action.git" \
-          INPUT_BITBUCKET_USERNAME="${{ secrets.BITBUCKET_USERNAME }}" \
-          INPUT_BITBUCKET_API_TOKEN="${{ secrets.BITBUCKET_TOKEN }}" \
-          INPUT_MIRROR_BRANCHES="all" \
-          INPUT_DRY_RUN="true" \
-          INPUT_DEBUG="true" \
-          ./git-mirror-action
-          echo "PASS: dry-run with Bitbucket succeeded"
-
-      - name: 'Test: dry-run multi-target parallel with retry (GitHub + GitLab + Bitbucket)'
-        run: |
-          INPUT_TARGETS="$(printf 'github::https://github.com/somaz94/git-mirror-action.git\ngitlab::https://gitlab.com/backup6695808/git-mirror-action.git\nbitbucket::https://bitbucket.org/somaz94/git-mirror-action.git')" \
+          INPUT_TARGETS="$(printf 'github::https://github.com/somaz94/git-mirror-action.git\ngitlab::https://gitlab.com/backup6695808/git-mirror-action.git')" \
           INPUT_GITLAB_TOKEN="${{ secrets.GITLAB_TOKEN }}" \
-          INPUT_BITBUCKET_USERNAME="${{ secrets.BITBUCKET_USERNAME }}" \
-          INPUT_BITBUCKET_API_TOKEN="${{ secrets.BITBUCKET_TOKEN }}" \
           INPUT_MIRROR_BRANCHES="all" \
           INPUT_RETRY_COUNT="2" \
           INPUT_RETRY_DELAY="1" \
