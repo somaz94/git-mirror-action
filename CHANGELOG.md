@@ -2,6 +2,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [v1.1.0](https://github.com/somaz94/multi-git-mirror/compare/v1.0.1...v1.1.0) (2026-03-18)
+
+### Features
+
+- change action name ([76a413e](https://github.com/somaz94/multi-git-mirror/commit/76a413e5ac3baca0d6809fb2fd74a09e789702b6))
+
+### Code Refactoring
+
+- rename git-mirror-action to multi-git-mirror across entire project ([2e4c6c4](https://github.com/somaz94/multi-git-mirror/commit/2e4c6c4d23fc6a82ab3f888beb9617a8ce5533b8))
+
+### Documentation
+
+- README.md ([9cce1f3](https://github.com/somaz94/multi-git-mirror/commit/9cce1f3ea49dabcdf42b57ce784bedae0b569ae5))
+- update changelog ([a08538e](https://github.com/somaz94/multi-git-mirror/commit/a08538e50aa29f6bc5b4c88408f788bd75531200))
+
+### Contributors
+
+- somaz
+
+<br/>
+
 ## [v1.0.1](https://github.com/somaz94/multi-git-mirror/compare/v1.0.0...v1.0.1) (2026-03-18)
 
 ### Bug Fixes
@@ -36,7 +57,7 @@ All notable changes to this project will be documented in this file.
 ### Features
 
 - add retry, pre-check, exclude branches, and parallel mirroring ([7165fea](https://github.com/somaz94/multi-git-mirror/commit/7165fea86181e48f994b3ab9fb04a5005e0f72cb))
-- scaffold Go-based multi-git-mirror project structure ([5529b82](https://github.com/somaz94/multi-git-mirror/commit/5529b826a354f67829bd3692df46c4c631760641))
+- scaffold Go-based git-mirror-action project structure ([5529b82](https://github.com/somaz94/multi-git-mirror/commit/5529b826a354f67829bd3692df46c4c631760641))
 
 ### Bug Fixes
 
