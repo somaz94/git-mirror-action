@@ -55,8 +55,28 @@ func collectSecrets(cfg *config.Config) []string {
 	return secrets
 }
 
+// ensureGitRepo initializes a temporary git repo if none exists (needed for dry-run in Docker).
+func (m *Mirror) ensureGitRepo() error {
+	if err := m.gitFn("rev-parse", "--git-dir"); err != nil {
+		m.logDebug("No git repository found, initializing temporary repo for dry-run")
+		if err := m.gitFn("init"); err != nil {
+			return fmt.Errorf("failed to initialize temporary git repo: %w", err)
+		}
+	}
+	return nil
+}
+
 // Run executes mirroring to all configured targets.
 func (m *Mirror) Run() []Result {
+	// Ensure we are inside a git repository
+	if err := m.ensureGitRepo(); err != nil {
+		return []Result{{
+			Target:  config.Target{},
+			Success: false,
+			Message: err.Error(),
+		}}
+	}
+
 	// Setup SSH if configured
 	if err := m.setupSSH(); err != nil {
 		return []Result{{

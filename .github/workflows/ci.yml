@@ -67,7 +67,7 @@ jobs:
       - name: 'Test: Docker dry-run succeeds with reachable URL'
         run: |
           docker run \
-            --env INPUT_TARGETS="github::https://github.com/${{ github.repository }}.git" \
+            --env INPUT_TARGETS="generic::https://github.com/somaz94/git-mirror-action.git" \
             --env INPUT_MIRROR_BRANCHES="all" \
             --env INPUT_DRY_RUN="true" \
             --env INPUT_DEBUG="true" \
@@ -84,21 +84,30 @@ jobs:
       - name: 'Test: Docker rejects empty branches'
         run: |
           ! docker run \
-            --env INPUT_TARGETS="generic::https://example.com/repo.git" \
+            --env INPUT_TARGETS="generic::https://example.com/org/repo.git" \
             --env INPUT_MIRROR_BRANCHES="" \
             --rm ${{ env.TEST_TAG }}
           echo "PASS: empty branches correctly rejected"
 
-      - name: 'Test: Docker multi-target dry-run'
+      - name: 'Test: Docker multi-target parallel dry-run (GitHub + GitLab)'
         run: |
           docker run \
-            --env INPUT_TARGETS="$(printf 'github::https://github.com/${{ github.repository }}.git\ngeneric::https://github.com/${{ github.repository }}.git')" \
+            --env INPUT_TARGETS="$(printf 'github::https://github.com/somaz94/git-mirror-action.git\ngitlab::https://gitlab.com/backup6695808/git-mirror-action.git')" \
             --env INPUT_MIRROR_BRANCHES="all" \
             --env INPUT_DRY_RUN="true" \
             --env INPUT_PARALLEL="true" \
             --env INPUT_DEBUG="true" \
             --rm ${{ env.TEST_TAG }}
           echo "PASS: multi-target parallel dry-run succeeded"
+
+      - name: 'Test: Docker dry-run fails with unreachable URL'
+        run: |
+          ! docker run \
+            --env INPUT_TARGETS="generic::https://example.com/org/repo.git" \
+            --env INPUT_MIRROR_BRANCHES="all" \
+            --env INPUT_DRY_RUN="true" \
+            --rm ${{ env.TEST_TAG }}
+          echo "PASS: dry-run correctly fails with unreachable URL"
 
   test-action:
     name: GitHub Actions Test
@@ -118,9 +127,9 @@ jobs:
       - name: Build binary
         run: go build -o git-mirror-action ./cmd/main.go
 
-      - name: 'Test: dry-run with reachable URL (exit 0)'
+      - name: 'Test: dry-run succeeds with reachable URL (exit 0)'
         run: |
-          INPUT_TARGETS="github::https://github.com/${{ github.repository }}.git" \
+          INPUT_TARGETS="generic::https://github.com/somaz94/git-mirror-action.git" \
           INPUT_MIRROR_BRANCHES="all" \
           INPUT_DRY_RUN="true" \
           INPUT_DEBUG="true" \
@@ -134,44 +143,53 @@ jobs:
 
       - name: 'Test: unknown provider fails (exit 1)'
         run: |
-          ! INPUT_TARGETS="invalid::https://example.com/repo.git" \
+          ! INPUT_TARGETS="invalid::https://example.com/org/repo.git" \
           INPUT_MIRROR_BRANCHES="all" \
           ./git-mirror-action
           echo "PASS: unknown provider correctly rejected"
 
       - name: 'Test: empty branches fails (exit 1)'
         run: |
-          ! INPUT_TARGETS="generic::https://example.com/repo.git" \
+          ! INPUT_TARGETS="generic::https://example.com/org/repo.git" \
           INPUT_MIRROR_BRANCHES="" \
           ./git-mirror-action
           echo "PASS: empty branches correctly rejected"
 
       - name: 'Test: dry-run with exclude branches (exit 0)'
         run: |
-          INPUT_TARGETS="github::https://github.com/${{ github.repository }}.git" \
+          INPUT_TARGETS="gitlab::https://gitlab.com/backup6695808/git-mirror-action.git" \
           INPUT_MIRROR_BRANCHES="all" \
           INPUT_EXCLUDE_BRANCHES="staging,hotfix" \
           INPUT_DRY_RUN="true" \
           ./git-mirror-action
           echo "PASS: dry-run with exclude branches succeeded"
 
-      - name: 'Test: dry-run with retry config (exit 0)'
+      - name: 'Test: dry-run multi-target with retry config (exit 0)'
         run: |
-          INPUT_TARGETS="github::https://github.com/${{ github.repository }}.git" \
+          INPUT_TARGETS="$(printf 'github::https://github.com/somaz94/git-mirror-action.git\ngitlab::https://gitlab.com/backup6695808/git-mirror-action.git')" \
           INPUT_MIRROR_BRANCHES="all" \
           INPUT_RETRY_COUNT="2" \
           INPUT_RETRY_DELAY="1" \
           INPUT_DRY_RUN="true" \
+          INPUT_PARALLEL="true" \
           ./git-mirror-action
-          echo "PASS: dry-run with retry config succeeded"
+          echo "PASS: dry-run multi-target with retry config succeeded"
 
       - name: 'Test: dry-run with specific branch (exit 0)'
         run: |
-          INPUT_TARGETS="github::https://github.com/${{ github.repository }}.git" \
+          INPUT_TARGETS="generic::https://github.com/somaz94/git-mirror-action.git" \
           INPUT_MIRROR_BRANCHES="main" \
           INPUT_DRY_RUN="true" \
           ./git-mirror-action
           echo "PASS: dry-run with specific branch succeeded"
+
+      - name: 'Test: dry-run fails with unreachable URL (exit 1)'
+        run: |
+          ! INPUT_TARGETS="generic::https://example.com/org/repo.git" \
+          INPUT_MIRROR_BRANCHES="all" \
+          INPUT_DRY_RUN="true" \
+          ./git-mirror-action
+          echo "PASS: dry-run correctly fails with unreachable URL"
 
   ci-result:
     name: CI Result

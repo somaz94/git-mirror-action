@@ -19,6 +19,47 @@ func mockGitOK() gitRunner {
 }
 
 
+func TestEnsureGitRepoAlreadyExists(t *testing.T) {
+	cfg := &config.Config{}
+	m := New(cfg)
+	m.gitFn = func(args ...string) error {
+		return nil // rev-parse succeeds = already a git repo
+	}
+	if err := m.ensureGitRepo(); err != nil {
+		t.Errorf("expected no error for existing repo, got: %v", err)
+	}
+}
+
+func TestEnsureGitRepoInitializes(t *testing.T) {
+	cfg := &config.Config{Debug: true}
+	m := New(cfg)
+	calls := []string{}
+	m.gitFn = func(args ...string) error {
+		calls = append(calls, args[0])
+		if args[0] == "rev-parse" {
+			return fmt.Errorf("not a git repo")
+		}
+		return nil
+	}
+	if err := m.ensureGitRepo(); err != nil {
+		t.Errorf("expected no error, got: %v", err)
+	}
+	if len(calls) < 2 || calls[1] != "init" {
+		t.Errorf("expected git init call, got calls: %v", calls)
+	}
+}
+
+func TestEnsureGitRepoInitFails(t *testing.T) {
+	cfg := &config.Config{}
+	m := New(cfg)
+	m.gitFn = func(args ...string) error {
+		return fmt.Errorf("fail")
+	}
+	if err := m.ensureGitRepo(); err == nil {
+		t.Error("expected error when init fails")
+	}
+}
+
 func TestInjectTokenAuth(t *testing.T) {
 	tests := []struct {
 		name     string
