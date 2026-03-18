@@ -173,8 +173,10 @@ Scoped to a single repository. Best for minimal-privilege access.
 
 Scoped to all repositories in a workspace. Useful when mirroring multiple repos.
 
+> **Note**: Workspace Access Tokens require a **Bitbucket Premium** plan. Free/Standard plans should use Repository Access Tokens instead.
+
 1. Go to your **Bitbucket workspace** → **Settings** (or visit `https://bitbucket.org/<workspace>/workspace/settings/access-tokens`)
-2. In the left sidebar under **Apps and features**, click **Access tokens**
+2. In the left sidebar under **Security**, click **Access tokens**
 3. Click **Create Workspace Access Token**
 4. Configure:
    - **Name**: `git-mirror-action`
