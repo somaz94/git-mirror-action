@@ -2,12 +2,37 @@ package mirror
 
 import (
 	"bytes"
+	"fmt"
 	"os"
 	"strings"
 	"testing"
 
 	"github.com/somaz94/git-mirror-action/internal/config"
 )
+
+// mockGit returns a gitRunner that always succeeds.
+func mockGitOK() gitRunner {
+	return func(args ...string) error {
+		return nil
+	}
+}
+
+// mockGitFail returns a gitRunner that always fails.
+func mockGitFail(msg string) gitRunner {
+	return func(args ...string) error {
+		return fmt.Errorf("%s", msg)
+	}
+}
+
+// mockGitFailOn returns a gitRunner that fails when the first arg matches.
+func mockGitFailOn(failCmd string) gitRunner {
+	return func(args ...string) error {
+		if len(args) > 0 && args[0] == failCmd {
+			return fmt.Errorf("mock %s failure", failCmd)
+		}
+		return nil
+	}
+}
 
 func TestInjectTokenAuth(t *testing.T) {
 	tests := []struct {
@@ -142,6 +167,9 @@ func TestNewMirror(t *testing.T) {
 	if m.cfg != cfg {
 		t.Error("expected mirror to hold the provided config")
 	}
+	if m.gitFn == nil {
+		t.Error("expected gitFn to be set")
+	}
 }
 
 func TestLogInfo(t *testing.T) {
@@ -238,6 +266,7 @@ func TestMirrorToDryRun(t *testing.T) {
 		GitLabToken: "test-token",
 	}
 	m := New(cfg)
+	m.gitFn = mockGitOK()
 
 	target := config.Target{
 		Provider: config.ProviderGitLab,
@@ -254,16 +283,151 @@ func TestMirrorToDryRun(t *testing.T) {
 	}
 }
 
-func TestRunDryRun(t *testing.T) {
+func TestMirrorToSuccess(t *testing.T) {
 	cfg := &config.Config{
-		DryRun:      true,
-		GitLabToken: "test-token",
+		GitLabToken:       "test-token",
+		MirrorAllBranches: true,
+		MirrorTags:        true,
+		ForcePush:         true,
+	}
+	m := New(cfg)
+	m.gitFn = mockGitOK()
+
+	target := config.Target{
+		Provider: config.ProviderGitLab,
+		URL:      "https://gitlab.com/org/repo.git",
+	}
+
+	result := m.mirrorTo(target)
+
+	if !result.Success {
+		t.Errorf("expected success, got failure: %s", result.Message)
+	}
+	if result.Message != "mirrored successfully" {
+		t.Errorf("expected 'mirrored successfully', got: %s", result.Message)
+	}
+}
+
+func TestMirrorToSuccessNoTags(t *testing.T) {
+	cfg := &config.Config{
+		MirrorAllBranches: true,
+		MirrorTags:        false,
+	}
+	m := New(cfg)
+	m.gitFn = mockGitOK()
+
+	target := config.Target{
+		Provider: config.ProviderGeneric,
+		URL:      "https://example.com/repo.git",
+	}
+
+	result := m.mirrorTo(target)
+
+	if !result.Success {
+		t.Errorf("expected success, got failure: %s", result.Message)
+	}
+}
+
+func TestMirrorToAddRemoteFails(t *testing.T) {
+	callCount := 0
+	cfg := &config.Config{}
+	m := New(cfg)
+	m.gitFn = func(args ...string) error {
+		callCount++
+		// First call is "remote remove" (ignored), second is "remote add" (fail)
+		if callCount == 2 {
+			return fmt.Errorf("remote add failed")
+		}
+		return nil
+	}
+
+	target := config.Target{
+		Provider: config.ProviderGeneric,
+		URL:      "https://example.com/repo.git",
+	}
+
+	result := m.mirrorTo(target)
+
+	if result.Success {
+		t.Error("expected failure when remote add fails")
+	}
+	if !strings.Contains(result.Message, "failed to add remote") {
+		t.Errorf("expected 'failed to add remote' message, got: %s", result.Message)
+	}
+}
+
+func TestMirrorToPushBranchesFails(t *testing.T) {
+	callCount := 0
+	cfg := &config.Config{
+		MirrorAllBranches: true,
+	}
+	m := New(cfg)
+	m.gitFn = func(args ...string) error {
+		callCount++
+		// 1: remote remove, 2: remote add, 3: push --all (fail)
+		if callCount == 3 {
+			return fmt.Errorf("push failed")
+		}
+		return nil
+	}
+
+	target := config.Target{
+		Provider: config.ProviderGeneric,
+		URL:      "https://example.com/repo.git",
+	}
+
+	result := m.mirrorTo(target)
+
+	if result.Success {
+		t.Error("expected failure when push branches fails")
+	}
+	if !strings.Contains(result.Message, "failed to push branches") {
+		t.Errorf("expected push branches error, got: %s", result.Message)
+	}
+}
+
+func TestMirrorToPushTagsFails(t *testing.T) {
+	callCount := 0
+	cfg := &config.Config{
+		MirrorAllBranches: true,
+		MirrorTags:        true,
+	}
+	m := New(cfg)
+	m.gitFn = func(args ...string) error {
+		callCount++
+		// 1: remote remove, 2: remote add, 3: push --all (ok), 4: push --tags (fail)
+		if callCount == 4 {
+			return fmt.Errorf("tags push failed")
+		}
+		return nil
+	}
+
+	target := config.Target{
+		Provider: config.ProviderGeneric,
+		URL:      "https://example.com/repo.git",
+	}
+
+	result := m.mirrorTo(target)
+
+	if result.Success {
+		t.Error("expected failure when push tags fails")
+	}
+	if !strings.Contains(result.Message, "failed to push tags") {
+		t.Errorf("expected push tags error, got: %s", result.Message)
+	}
+}
+
+func TestRunWithMockSuccess(t *testing.T) {
+	cfg := &config.Config{
+		MirrorAllBranches: true,
+		MirrorTags:        true,
 		Targets: []config.Target{
 			{Provider: config.ProviderGitLab, URL: "https://gitlab.com/org/repo.git"},
 			{Provider: config.ProviderGeneric, URL: "https://example.com/repo.git"},
 		},
 	}
 	m := New(cfg)
+	m.gitFn = mockGitOK()
 
 	results := m.Run()
 
@@ -277,65 +441,125 @@ func TestRunDryRun(t *testing.T) {
 	}
 }
 
-func TestGitCommandFailure(t *testing.T) {
-	cfg := &config.Config{}
+func TestRunWithMockFailure(t *testing.T) {
+	callCount := 0
+	cfg := &config.Config{
+		MirrorAllBranches: true,
+		Targets: []config.Target{
+			{Provider: config.ProviderGeneric, URL: "https://example.com/repo.git"},
+		},
+	}
 	m := New(cfg)
+	m.gitFn = func(args ...string) error {
+		callCount++
+		// 1: remote remove, 2: remote add, 3: push (fail)
+		if callCount == 3 {
+			return fmt.Errorf("push failed")
+		}
+		return nil
+	}
 
-	// Running an invalid git command should return an error
-	err := m.git("invalid-command-that-does-not-exist")
-	if err == nil {
-		t.Error("expected error for invalid git command")
+	results := m.Run()
+
+	if len(results) != 1 {
+		t.Fatalf("expected 1 result, got %d", len(results))
+	}
+	if results[0].Success {
+		t.Error("expected failure")
 	}
 }
 
-func TestPushBranchesSpecificBranches(t *testing.T) {
+func TestPushBranchesSpecificWithMock(t *testing.T) {
 	cfg := &config.Config{
 		MirrorAllBranches: false,
 		MirrorBranches:    []string{"main", "develop"},
 		ForcePush:         true,
 	}
 	m := New(cfg)
+	m.gitFn = mockGitOK()
 
-	// This will fail because the remote doesn't exist, but it tests the code path
-	err := m.pushBranches("nonexistent-remote")
-	if err == nil {
-		t.Error("expected error for nonexistent remote")
+	err := m.pushBranches("test-remote")
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
 	}
 }
 
-func TestPushBranchesAllBranches(t *testing.T) {
+func TestPushBranchesSpecificFailsOnSecond(t *testing.T) {
+	pushCount := 0
 	cfg := &config.Config{
-		MirrorAllBranches: true,
+		MirrorAllBranches: false,
+		MirrorBranches:    []string{"main", "develop"},
 		ForcePush:         false,
 	}
 	m := New(cfg)
+	m.gitFn = func(args ...string) error {
+		if len(args) > 0 && args[0] == "push" {
+			pushCount++
+			if pushCount == 2 {
+				return fmt.Errorf("push develop failed")
+			}
+		}
+		return nil
+	}
 
-	err := m.pushBranches("nonexistent-remote")
+	err := m.pushBranches("test-remote")
 	if err == nil {
-		t.Error("expected error for nonexistent remote")
+		t.Error("expected error on second branch push")
+	}
+	if !strings.Contains(err.Error(), "branch develop") {
+		t.Errorf("expected develop branch error, got: %v", err)
 	}
 }
 
-func TestPushTags(t *testing.T) {
+func TestPushBranchesAllWithMock(t *testing.T) {
 	cfg := &config.Config{
-		ForcePush: true,
+		MirrorAllBranches: true,
+		ForcePush:         true,
 	}
 	m := New(cfg)
+	m.gitFn = mockGitOK()
 
-	err := m.pushTags("nonexistent-remote")
-	if err == nil {
-		t.Error("expected error for nonexistent remote")
+	err := m.pushBranches("test-remote")
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
 	}
 }
 
-func TestPushTagsNoForce(t *testing.T) {
-	cfg := &config.Config{
-		ForcePush: false,
+func TestPushTagsWithMock(t *testing.T) {
+	cfg := &config.Config{ForcePush: true}
+	m := New(cfg)
+	m.gitFn = mockGitOK()
+
+	err := m.pushTags("test-remote")
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
 	}
+}
+
+func TestPushTagsNoForceWithMock(t *testing.T) {
+	cfg := &config.Config{ForcePush: false}
+	m := New(cfg)
+	m.gitFn = mockGitOK()
+
+	err := m.pushTags("test-remote")
+	if err != nil {
+		t.Errorf("unexpected error: %v", err)
+	}
+}
+
+func TestExecGit(t *testing.T) {
+	cfg := &config.Config{}
 	m := New(cfg)
 
-	err := m.pushTags("nonexistent-remote")
+	// execGit should work with a valid git command
+	err := m.execGit("version")
+	if err != nil {
+		t.Errorf("expected git version to succeed: %v", err)
+	}
+
+	// execGit should fail with an invalid command
+	err = m.execGit("invalid-command-that-does-not-exist")
 	if err == nil {
-		t.Error("expected error for nonexistent remote")
+		t.Error("expected error for invalid git command")
 	}
 }

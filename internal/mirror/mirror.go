@@ -16,14 +16,20 @@ type Result struct {
 	Message string        `json:"message"`
 }
 
+// gitRunner is a function that executes a git command.
+type gitRunner func(args ...string) error
+
 // Mirror handles repository mirroring operations.
 type Mirror struct {
-	cfg *config.Config
+	cfg    *config.Config
+	gitFn  gitRunner
 }
 
 // New creates a new Mirror instance.
 func New(cfg *config.Config) *Mirror {
-	return &Mirror{cfg: cfg}
+	m := &Mirror{cfg: cfg}
+	m.gitFn = m.execGit
+	return m
 }
 
 // Run executes mirroring to all configured targets.
@@ -149,6 +155,10 @@ func injectTokenAuth(url, username, password string) string {
 }
 
 func (m *Mirror) git(args ...string) error {
+	return m.gitFn(args...)
+}
+
+func (m *Mirror) execGit(args ...string) error {
 	m.logDebug("git %s", strings.Join(args, " "))
 	cmd := exec.Command("git", args...)
 	cmd.Stdout = os.Stdout
