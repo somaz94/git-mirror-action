@@ -1,10 +1,10 @@
 # Multi Git Mirror
 
-[![Continuous Integration](https://github.com/somaz94/git-mirror-action/actions/workflows/ci.yml/badge.svg)](https://github.com/somaz94/git-mirror-action/actions/workflows/ci.yml)
+[![Continuous Integration](https://github.com/somaz94/multi-git-mirror/actions/workflows/ci.yml/badge.svg)](https://github.com/somaz94/multi-git-mirror/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](LICENSE)
-[![Latest Tag](https://img.shields.io/github/v/tag/somaz94/git-mirror-action)](https://github.com/somaz94/git-mirror-action/tags)
-[![Top Language](https://img.shields.io/github/languages/top/somaz94/git-mirror-action)](https://github.com/somaz94/git-mirror-action)
-[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Git%20Mirror%20Action-blue?logo=github)](https://github.com/marketplace/actions/git-mirror-action)
+[![Latest Tag](https://img.shields.io/github/v/tag/somaz94/multi-git-mirror)](https://github.com/somaz94/multi-git-mirror/tags)
+[![Top Language](https://img.shields.io/github/languages/top/somaz94/multi-git-mirror)](https://github.com/somaz94/multi-git-mirror)
+[![GitHub Marketplace](https://img.shields.io/badge/Marketplace-Git%20Mirror%20Action-blue?logo=github)](https://github.com/marketplace/actions/multi-git-mirror)
 
 A Go-based GitHub Action that mirrors repositories to multiple Git hosting providers — GitLab, GitHub, Bitbucket, AWS CodeCommit, and more — in a single step.
 
@@ -47,7 +47,7 @@ steps:
       fetch-depth: 0
 
   - name: Mirror to GitLab
-    uses: somaz94/git-mirror-action@v1
+    uses: somaz94/multi-git-mirror@v1
     with:
       targets: |
         gitlab::https://gitlab.com/myorg/myrepo.git
@@ -60,7 +60,7 @@ steps:
 
 ```yaml
 - name: Mirror to multiple targets
-  uses: somaz94/git-mirror-action@v1
+  uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       gitlab::https://gitlab.com/myorg/myrepo.git
@@ -76,7 +76,7 @@ steps:
 
 ```yaml
 - name: Mirror to Bitbucket
-  uses: somaz94/git-mirror-action@v1
+  uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       bitbucket::https://bitbucket.org/myorg/myrepo.git
@@ -90,7 +90,7 @@ steps:
 
 ```yaml
 - name: Mirror via SSH
-  uses: somaz94/git-mirror-action@v1
+  uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       generic::git@custom-git.example.com:org/repo.git
@@ -103,7 +103,7 @@ steps:
 
 ```yaml
 - name: Mirror (dry run)
-  uses: somaz94/git-mirror-action@v1
+  uses: somaz94/multi-git-mirror@v1
   id: mirror
   with:
     targets: |
@@ -145,7 +145,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
 
       - name: Mirror to backup providers
-        uses: somaz94/git-mirror-action@v1
+        uses: somaz94/multi-git-mirror@v1
         with:
           targets: |
             gitlab::https://gitlab.com/myorg/myrepo.git

@@ -30,7 +30,7 @@ jobs:
 
       - name: Mirror dry-run (single target)
         id: mirror-single
-        uses: somaz94/git-mirror-action@v1
+        uses: somaz94/multi-git-mirror@v1
         continue-on-error: true
         with:
           targets: |
@@ -52,7 +52,7 @@ jobs:
 
       - name: Mirror dry-run (multi-target with options)
         id: mirror-multi
-        uses: somaz94/git-mirror-action@v1
+        uses: somaz94/multi-git-mirror@v1
         continue-on-error: true
         with:
           targets: |

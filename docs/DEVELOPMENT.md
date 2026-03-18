@@ -1,6 +1,6 @@
 # Development
 
-Guide for building, testing, and contributing to git-mirror-action.
+Guide for building, testing, and contributing to multi-git-mirror.
 
 <br/>
 
@@ -70,7 +70,7 @@ Guide for building, testing, and contributing to git-mirror-action.
 ## Build
 
 ```bash
-make build           # Build binary → ./git-mirror-action
+make build           # Build binary → ./multi-git-mirror
 make clean           # Remove build artifacts
 ```
 
@@ -105,14 +105,14 @@ Current coverage is **93%+**. Testable areas:
 
 ```bash
 # Build locally
-docker build -t git-mirror-action .
+docker build -t multi-git-mirror .
 
 # Test with dry run
 docker run \
-  --env INPUT_TARGETS="generic::https://github.com/somaz94/git-mirror-action.git" \
+  --env INPUT_TARGETS="generic::https://github.com/somaz94/multi-git-mirror.git" \
   --env INPUT_MIRROR_BRANCHES="all" \
   --env INPUT_DRY_RUN="true" \
-  --rm git-mirror-action
+  --rm multi-git-mirror
 ```
 
 The Dockerfile uses a multi-stage build:

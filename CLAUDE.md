@@ -1,4 +1,4 @@
-# CLAUDE.md - git-mirror-action
+# CLAUDE.md - multi-git-mirror
 
 GitHub Action to mirror repositories to multiple Git hosting providers (GitLab, GitHub, Bitbucket, CodeCommit, etc.) using Go.
 

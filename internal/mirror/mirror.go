@@ -9,7 +9,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/somaz94/git-mirror-action/internal/config"
+	"github.com/somaz94/multi-git-mirror/internal/config"
 )
 
 // Result represents the outcome of mirroring to a single target.

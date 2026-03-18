@@ -21,7 +21,7 @@ Guide for configuring authentication for each supported Git provider, including 
 Uses OAuth2 token authentication. The token is injected into the HTTPS URL as `https://oauth2:<token>@gitlab.com/...`.
 
 ```yaml
-- uses: somaz94/git-mirror-action@v1
+- uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       gitlab::https://gitlab.com/myorg/myrepo.git
@@ -46,7 +46,7 @@ Uses OAuth2 token authentication. The token is injected into the HTTPS URL as `h
 3. In the left sidebar, click **Access Tokens**
 4. Click **Add new token**
 5. Configure:
-   - **Token name**: `git-mirror-action`
+   - **Token name**: `multi-git-mirror`
    - **Expiration date**: Set an appropriate date (recommended: 1 year max)
    - **Scopes**: Check `write_repository`
 6. Click **Create personal access token**
@@ -72,7 +72,7 @@ For organization-level access, use a Project Access Token instead:
 Uses x-access-token authentication. The token is injected as `https://x-access-token:<token>@github.com/...`.
 
 ```yaml
-- uses: somaz94/git-mirror-action@v1
+- uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       github::https://github.com/myorg/myrepo.git
@@ -100,7 +100,7 @@ Uses x-access-token authentication. The token is injected as `https://x-access-t
 4. Click **Personal access tokens** → **Fine-grained tokens**
 5. Click **Generate new token**
 6. Configure:
-   - **Token name**: `git-mirror-action`
+   - **Token name**: `multi-git-mirror`
    - **Expiration**: Select an appropriate duration
    - **Resource owner**: Select the target organization or your account
    - **Repository access**: Select **Only select repositories** → choose the target repo
@@ -126,7 +126,7 @@ Uses x-access-token authentication. The token is injected as `https://x-access-t
 Uses access token authentication. Credentials are injected as `https://user:token@bitbucket.org/...`.
 
 ```yaml
-- uses: somaz94/git-mirror-action@v1
+- uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       bitbucket::https://bitbucket.org/myorg/myrepo.git
@@ -157,7 +157,7 @@ Scoped to a single repository. Best for minimal-privilege access.
 2. In the left sidebar under **Security**, click **Access tokens**
 3. Click **Create Repository Access Token**
 4. Configure:
-   - **Name**: `git-mirror-action`
+   - **Name**: `multi-git-mirror`
    - **Scopes**: Check **Repositories** → **Write**
 5. Click **Create**
 6. **Copy the token immediately** — it will not be shown again
@@ -183,7 +183,7 @@ Scoped to all repositories in a workspace. Useful when mirroring multiple repos.
 2. In the left sidebar under **Security**, click **Access tokens**
 3. Click **Create Workspace Access Token**
 4. Configure:
-   - **Name**: `git-mirror-action`
+   - **Name**: `multi-git-mirror`
    - **Scopes**: Check **Repositories** → **Write**
 5. Click **Create**
 6. **Copy the token immediately** — it will not be shown again
@@ -218,7 +218,7 @@ CodeCommit uses IAM-based authentication via the Git credential helper. The URL 
 - name: Setup CodeCommit credential helper
   run: git config --global credential.helper '!aws codecommit credential-helper $@'
 
-- uses: somaz94/git-mirror-action@v1
+- uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       codecommit::https://git-codecommit.us-east-1.amazonaws.com/v1/repos/myrepo
@@ -253,7 +253,7 @@ CodeCommit uses IAM-based authentication via the Git credential helper. The URL 
 
 1. Log in to [AWS Console](https://console.aws.amazon.com) → **IAM**
 2. Click **Users** → **Create user**
-3. Enter username: `git-mirror-action`
+3. Enter username: `multi-git-mirror`
 4. Click **Next** → **Attach policies directly**
 5. Click **Create policy** and paste the JSON above (adjust the Resource ARN)
 6. Attach the policy to the user
@@ -285,7 +285,7 @@ See [AWS docs](https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_provide
 For providers that support SSH, use the `ssh_private_key` input with the `generic` provider.
 
 ```yaml
-- uses: somaz94/git-mirror-action@v1
+- uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       generic::git@custom-git.example.com:org/repo.git
@@ -310,7 +310,7 @@ When `ssh_private_key` is provided, the action automatically:
 1. Generate an Ed25519 key pair (no passphrase):
 
    ```bash
-   ssh-keygen -t ed25519 -C "git-mirror-action" -f mirror_key -N ""
+   ssh-keygen -t ed25519 -C "multi-git-mirror" -f mirror_key -N ""
    ```
 
 2. This creates two files:

@@ -38,7 +38,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: somaz94/git-mirror-action@v1
+      - uses: somaz94/multi-git-mirror@v1
         with:
           targets: |
             gitlab::https://gitlab.com/myorg/myrepo.git
@@ -67,7 +67,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: somaz94/git-mirror-action@v1
+      - uses: somaz94/multi-git-mirror@v1
         with:
           targets: |
             gitlab::https://gitlab.com/myorg/myrepo.git
@@ -110,7 +110,7 @@ jobs:
           tag_name: ${{ github.ref_name }}
 
       - name: Mirror to backup providers
-        uses: somaz94/git-mirror-action@v1
+        uses: somaz94/multi-git-mirror@v1
         with:
           targets: |
             gitlab::https://gitlab.com/myorg/myrepo.git
@@ -154,7 +154,7 @@ jobs:
         run: git config --global credential.helper '!aws codecommit credential-helper $@'
 
       - name: Mirror to all providers
-        uses: somaz94/git-mirror-action@v1
+        uses: somaz94/multi-git-mirror@v1
         with:
           targets: |
             gitlab::https://gitlab.com/myorg/myrepo.git
@@ -172,7 +172,7 @@ jobs:
 Mirror only specific branches.
 
 ```yaml
-- uses: somaz94/git-mirror-action@v1
+- uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       gitlab::https://gitlab.com/myorg/myrepo.git
@@ -188,7 +188,7 @@ Mirror only specific branches.
 Mirror all branches except specific ones.
 
 ```yaml
-- uses: somaz94/git-mirror-action@v1
+- uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       gitlab::https://gitlab.com/myorg/myrepo.git
@@ -204,7 +204,7 @@ Mirror all branches except specific ones.
 Mirror to multiple providers concurrently with automatic retry on failure.
 
 ```yaml
-- uses: somaz94/git-mirror-action@v1
+- uses: somaz94/multi-git-mirror@v1
   with:
     targets: |
       gitlab::https://gitlab.com/myorg/myrepo.git
@@ -225,7 +225,7 @@ Mirror to multiple providers concurrently with automatic retry on failure.
 Test your configuration without actually pushing.
 
 ```yaml
-- uses: somaz94/git-mirror-action@v1
+- uses: somaz94/multi-git-mirror@v1
   id: mirror
   with:
     targets: |
@@ -251,7 +251,7 @@ Use mirror results in subsequent steps.
 
 ```yaml
 - name: Mirror repositories
-  uses: somaz94/git-mirror-action@v1
+  uses: somaz94/multi-git-mirror@v1
   id: mirror
   with:
     targets: |

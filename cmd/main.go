@@ -5,9 +5,9 @@ import (
 	"os"
 	"os/exec"
 
-	"github.com/somaz94/git-mirror-action/internal/config"
-	"github.com/somaz94/git-mirror-action/internal/mirror"
-	"github.com/somaz94/git-mirror-action/internal/output"
+	"github.com/somaz94/multi-git-mirror/internal/config"
+	"github.com/somaz94/multi-git-mirror/internal/mirror"
+	"github.com/somaz94/multi-git-mirror/internal/output"
 )
 
 func main() {

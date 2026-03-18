@@ -16,11 +16,11 @@ jobs:
           lfs: true
 
       - name: Mirror to Bitbucket
-        # uses: somaz94/git-mirror-action@v1
+        # uses: somaz94/multi-git-mirror@v1
         uses: ./
         with:
           targets: |
-            bitbucket::https://bitbucket.org/somaz94/git-mirror-action.git
+            bitbucket::https://bitbucket.org/somaz94/multi-git-mirror.git
           bitbucket_username: ${{ secrets.BITBUCKET_USERNAME }}
           bitbucket_api_token: ${{ secrets.BITBUCKET_TOKEN }}
           mirror_branches: 'all'

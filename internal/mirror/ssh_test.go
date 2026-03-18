@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/somaz94/git-mirror-action/internal/config"
+	"github.com/somaz94/multi-git-mirror/internal/config"
 )
 
 func TestSetupSSHNoKey(t *testing.T) {

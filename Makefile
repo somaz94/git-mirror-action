@@ -1,6 +1,6 @@
 .PHONY: build test test-unit test-all cover cover-html bench lint fmt clean help
 
-BINARY := git-mirror-action
+BINARY := multi-git-mirror
 GOFLAGS := -v
 
 ## Build

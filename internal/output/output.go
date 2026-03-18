@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/somaz94/git-mirror-action/internal/mirror"
+	"github.com/somaz94/multi-git-mirror/internal/mirror"
 )
 
 // Write writes mirror results to GitHub Actions outputs.

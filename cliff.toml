@@ -41,4 +41,4 @@ commit_parsers = [
 
 [remote.github]
 owner = "somaz94"
-repo = "git-mirror-action"
+repo = "multi-git-mirror"

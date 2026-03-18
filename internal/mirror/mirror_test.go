@@ -8,7 +8,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/somaz94/git-mirror-action/internal/config"
+	"github.com/somaz94/multi-git-mirror/internal/config"
 )
 
 // mockGit returns a gitRunner that always succeeds.
