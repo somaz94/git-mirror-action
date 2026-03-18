@@ -46,7 +46,7 @@ func collectSecrets(cfg *config.Config) []string {
 		cfg.GitLabToken,
 		cfg.GitHubToken,
 		cfg.BitbucketUsername,
-		cfg.BitbucketPassword,
+		cfg.BitbucketAPIToken,
 		cfg.SSHPrivateKey,
 	} {
 		if s != "" {
@@ -289,8 +289,8 @@ func (m *Mirror) buildAuthURL(target config.Target) (string, error) {
 			rawURL = injectTokenAuth(rawURL, "x-access-token", m.cfg.GitHubToken)
 		}
 	case config.ProviderBitbucket:
-		if m.cfg.BitbucketUsername != "" && m.cfg.BitbucketPassword != "" {
-			rawURL = injectTokenAuth(rawURL, m.cfg.BitbucketUsername, m.cfg.BitbucketPassword)
+		if m.cfg.BitbucketUsername != "" && m.cfg.BitbucketAPIToken != "" {
+			rawURL = injectTokenAuth(rawURL, m.cfg.BitbucketUsername, m.cfg.BitbucketAPIToken)
 		}
 	case config.ProviderCodeCommit:
 		// CodeCommit uses credential-helper or IAM, URL is used as-is

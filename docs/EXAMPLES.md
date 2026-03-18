@@ -74,7 +74,7 @@ jobs:
             bitbucket::https://bitbucket.org/myorg/myrepo.git
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
           bitbucket_username: ${{ secrets.BITBUCKET_USERNAME }}
-          bitbucket_password: ${{ secrets.BITBUCKET_APP_PASSWORD }}
+          bitbucket_api_token: ${{ secrets.BITBUCKET_API_TOKEN }}
           mirror_branches: 'all'
           mirror_tags: 'true'
 ```
@@ -117,7 +117,7 @@ jobs:
             bitbucket::https://bitbucket.org/myorg/myrepo.git
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
           bitbucket_username: ${{ secrets.BITBUCKET_USERNAME }}
-          bitbucket_password: ${{ secrets.BITBUCKET_APP_PASSWORD }}
+          bitbucket_api_token: ${{ secrets.BITBUCKET_API_TOKEN }}
 ```
 
 <br/>
@@ -162,7 +162,7 @@ jobs:
             codecommit::https://git-codecommit.us-east-1.amazonaws.com/v1/repos/myrepo
           gitlab_token: ${{ secrets.GITLAB_TOKEN }}
           bitbucket_username: ${{ secrets.BITBUCKET_USERNAME }}
-          bitbucket_password: ${{ secrets.BITBUCKET_APP_PASSWORD }}
+          bitbucket_api_token: ${{ secrets.BITBUCKET_API_TOKEN }}
 ```
 
 <br/>
@@ -212,7 +212,7 @@ Mirror to multiple providers concurrently with automatic retry on failure.
       codecommit::https://git-codecommit.us-east-1.amazonaws.com/v1/repos/myrepo
     gitlab_token: ${{ secrets.GITLAB_TOKEN }}
     bitbucket_username: ${{ secrets.BITBUCKET_USERNAME }}
-    bitbucket_password: ${{ secrets.BITBUCKET_APP_PASSWORD }}
+    bitbucket_api_token: ${{ secrets.BITBUCKET_API_TOKEN }}
     parallel: 'true'
     retry_count: '3'
     retry_delay: '10'
@@ -233,7 +233,7 @@ Test your configuration without actually pushing.
       bitbucket::https://bitbucket.org/myorg/myrepo.git
     gitlab_token: ${{ secrets.GITLAB_TOKEN }}
     bitbucket_username: ${{ secrets.BITBUCKET_USERNAME }}
-    bitbucket_password: ${{ secrets.BITBUCKET_APP_PASSWORD }}
+    bitbucket_api_token: ${{ secrets.BITBUCKET_API_TOKEN }}
     dry_run: 'true'
     debug: 'true'
 
@@ -259,7 +259,7 @@ Use mirror results in subsequent steps.
       bitbucket::https://bitbucket.org/myorg/myrepo.git
     gitlab_token: ${{ secrets.GITLAB_TOKEN }}
     bitbucket_username: ${{ secrets.BITBUCKET_USERNAME }}
-    bitbucket_password: ${{ secrets.BITBUCKET_APP_PASSWORD }}
+    bitbucket_api_token: ${{ secrets.BITBUCKET_API_TOKEN }}
 
 - name: Notify on failure
   if: steps.mirror.outputs.failed_count != '0'

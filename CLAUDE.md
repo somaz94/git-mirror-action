@@ -40,7 +40,7 @@ make clean           # Remove artifacts
 ## Key Inputs
 
 - **Required**: `targets` (newline-separated, `provider::url` or auto-detect)
-- **Auth**: `gitlab_token`, `github_token`, `bitbucket_username`, `bitbucket_password`, `ssh_private_key`
+- **Auth**: `gitlab_token`, `github_token`, `bitbucket_username`, `bitbucket_api_token`, `ssh_private_key`
 - **Options**: `mirror_branches` (default: all), `mirror_tags` (default: true), `force_push` (default: true), `exclude_branches`, `parallel`
 - **Retry**: `retry_count` (default: 0), `retry_delay` (default: 5s)
 - **Debug**: `dry_run` (includes pre-check via `git ls-remote`), `debug`

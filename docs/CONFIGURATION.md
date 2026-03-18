@@ -23,7 +23,7 @@ Complete reference for all inputs, outputs, and target configuration.
 | `gitlab_token` | GitLab personal access token | No | `''` |
 | `github_token` | GitHub personal access token | No | `''` |
 | `bitbucket_username` | Bitbucket username for app password auth | No | `''` |
-| `bitbucket_password` | Bitbucket app password | No | `''` |
+| `bitbucket_api_token` | Bitbucket API token | No | `''` |
 | `ssh_private_key` | SSH private key for SSH-based authentication | No | `''` |
 | `mirror_branches` | Branches to mirror (comma-separated, or `all`) | No | `all` |
 | `mirror_tags` | Mirror tags | No | `true` |

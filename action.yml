@@ -19,11 +19,11 @@ inputs:
     required: false
     default: ''
   bitbucket_username:
-    description: 'Bitbucket username for app password auth'
+    description: 'Bitbucket username for API token auth'
     required: false
     default: ''
-  bitbucket_password:
-    description: 'Bitbucket app password'
+  bitbucket_api_token:
+    description: 'Bitbucket API token'
     required: false
     default: ''
   ssh_private_key:
@@ -83,7 +83,7 @@ runs:
     INPUT_GITLAB_TOKEN: ${{ inputs.gitlab_token }}
     INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
     INPUT_BITBUCKET_USERNAME: ${{ inputs.bitbucket_username }}
-    INPUT_BITBUCKET_PASSWORD: ${{ inputs.bitbucket_password }}
+    INPUT_BITBUCKET_API_TOKEN: ${{ inputs.bitbucket_api_token }}
     INPUT_SSH_PRIVATE_KEY: ${{ inputs.ssh_private_key }}
     INPUT_MIRROR_BRANCHES: ${{ inputs.mirror_branches }}
     INPUT_MIRROR_TAGS: ${{ inputs.mirror_tags }}

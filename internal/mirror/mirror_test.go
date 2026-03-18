@@ -128,7 +128,7 @@ func TestBuildAuthURL(t *testing.T) {
 		},
 		{
 			name: "bitbucket with credentials",
-			cfg:  &config.Config{BitbucketUsername: "user", BitbucketPassword: "pass"},
+			cfg:  &config.Config{BitbucketUsername: "user", BitbucketAPIToken: "pass"},
 			target: config.Target{
 				Provider: config.ProviderBitbucket,
 				URL:      "https://bitbucket.org/org/repo.git",
@@ -649,7 +649,7 @@ func TestCollectSecrets(t *testing.T) {
 		GitLabToken:       "gl-tok",
 		GitHubToken:       "",
 		BitbucketUsername: "bb-user",
-		BitbucketPassword: "bb-pass",
+		BitbucketAPIToken: "bb-pass",
 		SSHPrivateKey:     "ssh-key",
 	}
 	secrets := collectSecrets(cfg)
@@ -671,7 +671,7 @@ func TestCollectSecretsEmpty(t *testing.T) {
 func TestMaskSecretsInStderr(t *testing.T) {
 	cfg := &config.Config{
 		BitbucketUsername: "myuser",
-		BitbucketPassword: "mypass",
+		BitbucketAPIToken: "mypass",
 	}
 	m := New(cfg)
 

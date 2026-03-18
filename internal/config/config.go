@@ -39,7 +39,7 @@ type Config struct {
 	GitLabToken       string
 	GitHubToken       string
 	BitbucketUsername string
-	BitbucketPassword string
+	BitbucketAPIToken string
 	SSHPrivateKey     string
 	MirrorBranches    []string
 	MirrorAllBranches bool
@@ -91,7 +91,7 @@ func Load() (*Config, error) {
 		GitLabToken:       os.Getenv("INPUT_GITLAB_TOKEN"),
 		GitHubToken:       os.Getenv("INPUT_GITHUB_TOKEN"),
 		BitbucketUsername: os.Getenv("INPUT_BITBUCKET_USERNAME"),
-		BitbucketPassword: os.Getenv("INPUT_BITBUCKET_PASSWORD"),
+		BitbucketAPIToken: os.Getenv("INPUT_BITBUCKET_API_TOKEN"),
 		SSHPrivateKey:     os.Getenv("INPUT_SSH_PRIVATE_KEY"),
 		MirrorBranches:    branchList,
 		MirrorAllBranches: mirrorAll,
@@ -129,7 +129,7 @@ func (c *Config) Validate() error {
 				logWarning("target %s: no github_token or ssh_private_key provided", t.URL)
 			}
 		case ProviderBitbucket:
-			if (c.BitbucketUsername == "" || c.BitbucketPassword == "") && c.SSHPrivateKey == "" {
+			if (c.BitbucketUsername == "" || c.BitbucketAPIToken == "") && c.SSHPrivateKey == "" {
 				logWarning("target %s: no bitbucket credentials or ssh_private_key provided", t.URL)
 			}
 		case ProviderCodeCommit:

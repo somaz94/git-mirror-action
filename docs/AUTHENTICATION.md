@@ -123,7 +123,7 @@ Uses x-access-token authentication. The token is injected as `https://x-access-t
 
 ## Bitbucket
 
-Uses username and app password authentication. Credentials are injected as `https://user:password@bitbucket.org/...`.
+Uses username and API token (or legacy app password) authentication. Credentials are injected as `https://user:token@bitbucket.org/...`.
 
 ```yaml
 - uses: somaz94/git-mirror-action@v1
@@ -131,43 +131,41 @@ Uses username and app password authentication. Credentials are injected as `http
     targets: |
       bitbucket::https://bitbucket.org/myorg/myrepo.git
     bitbucket_username: ${{ secrets.BITBUCKET_USERNAME }}
-    bitbucket_password: ${{ secrets.BITBUCKET_APP_PASSWORD }}
+    bitbucket_api_token: ${{ secrets.BITBUCKET_API_TOKEN }}
 ```
 
 <br/>
 
-### Required Permissions
+### Required Scopes
 
-| Permission | Purpose | Required |
-|------------|---------|----------|
+| Scope | Purpose | Required |
+|-------|---------|----------|
 | Repositories: Write | Push access to repositories | Yes |
 | Repositories: Read | Read access (for private repos) | Optional |
 
-> **Note**: Both `bitbucket_username` and `bitbucket_password` must be provided. If either is missing, the URL is used as-is.
+> **Note**: Both `bitbucket_username` and `bitbucket_api_token` must be provided. If either is missing, the URL is used as-is.
+
+> **Important**: Bitbucket has deprecated App Passwords (disabled June 9, 2026). Use **API Tokens** instead.
 
 <br/>
 
-### Step-by-Step: Creating a Bitbucket App Password
+### Step-by-Step: Creating a Bitbucket API Token
 
-1. Log in to [Bitbucket](https://bitbucket.org)
-2. Click your **avatar** (bottom-left) → **Personal settings**
-3. In the left sidebar under **Access management**, click **App passwords**
-4. Click **Create app password**
-5. Configure:
-   - **Label**: `git-mirror-action`
-   - **Permissions**: Check **Repositories** → **Write** (this also grants Read)
-6. Click **Create**
-7. **Copy the password immediately** — it will not be shown again
-8. Add two GitHub secrets:
+1. Go to [Atlassian API Tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
+2. Click **Create API token**
+3. Enter label: `git-mirror-action`
+4. Click **Create**
+5. **Copy the token immediately** — it will not be shown again
+6. Add two GitHub secrets:
    - `BITBUCKET_USERNAME`: Your Bitbucket username (not email)
-   - `BITBUCKET_APP_PASSWORD`: The app password you just created
+   - `BITBUCKET_API_TOKEN`: The API token you just created
 
 <br/>
 
 ### Finding Your Bitbucket Username
 
 Your Bitbucket username is NOT your email. To find it:
-1. Go to **Personal settings**
+1. Click the **gear icon** (⚙️, top-right) → **Personal Bitbucket settings**
 2. Your username is shown under **Atlassian account settings** or in the URL: `bitbucket.org/<username>/`
 
 <br/>
@@ -341,7 +339,7 @@ All credentials must be stored as GitHub secrets. Never hardcode them in workflo
 |----------|---------------|
 | GitLab | `GITLAB_TOKEN` |
 | GitHub | `MIRROR_GITHUB_TOKEN` |
-| Bitbucket | `BITBUCKET_USERNAME`, `BITBUCKET_APP_PASSWORD` |
+| Bitbucket | `BITBUCKET_USERNAME`, `BITBUCKET_API_TOKEN` |
 | CodeCommit | `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` |
 | SSH | `SSH_PRIVATE_KEY` |
 
